@@ -53,8 +53,8 @@ When nil - do not expand.
 t - expand recursively
 number - expand N levels."
   :type '(choice (const :tag "Do not expand" nil)
-                 (const :tag "Expand recursively" t)
-                 (number :tag "Expand level"))
+          (const :tag "Expand recursively" t)
+          (number :tag "Expand level"))
   :group 'dap-ui)
 
 (defcustom dap-ui-overlay-priority 100
@@ -65,11 +65,11 @@ number - expand N levels."
 (defcustom dap-ui-controls-screen-position #'posframe-poshandler-frame-top-center
   "On-screen position of controls when they are visible."
   :type '(choice (const :tag "Top center" posframe-poshandler-frame-top-center)
-                 (const :tag "Top left" posframe-poshandler-frame-top-left-corner)
-                 (const :tag "Top right" posframe-poshandler-frame-top-right-corner)
-                 (const :tag "Bottom center" posframe-poshandler-frame-bottom-center)
-                 (const :tag "Bottom left" posframe-poshandler-frame-bottom-left-corner)
-                 (const :tag "Bottom right" posframe-poshandler-frame-bottom-right-corner))
+          (const :tag "Top left" posframe-poshandler-frame-top-left-corner)
+          (const :tag "Top right" posframe-poshandler-frame-top-right-corner)
+          (const :tag "Bottom center" posframe-poshandler-frame-bottom-center)
+          (const :tag "Bottom left" posframe-poshandler-frame-bottom-left-corner)
+          (const :tag "Bottom right" posframe-poshandler-frame-bottom-right-corner))
   :group 'dap-ui)
 
 (define-obsolete-variable-alias
@@ -83,8 +83,8 @@ When nil - do not expand.
 t - expand recursively
 number - expand N levels."
   :type '(choice (const :tag "Do not expand" nil)
-                 (const :tag "Expand recursively" t)
-                 (number :tag "Expand level"))
+          (const :tag "Expand recursively" t)
+          (number :tag "Expand level"))
   :group 'dap-ui)
 
 (defface dap-ui-compile-errline
@@ -540,9 +540,9 @@ DEBUG-SESSION is the debug session triggering the event."
 (defun dap-ui--create-command (image command hover-text)
   (propertize "    "
               'display `(image :type png
-                               :file ,(f-join dap-ui--control-images-root-dir image)
-                               :ascent center
-                               :background ,(face-attribute 'dap-ui-controls-fringe :background nil 'default))
+                         :file ,(f-join dap-ui--control-images-root-dir image)
+                         :ascent center
+                         :background ,(face-attribute 'dap-ui-controls-fringe :background nil 'default))
               'local-map (--doto (make-sparse-keymap)
                            (define-key it [mouse-1] command))
               'pointer 'hand
@@ -870,17 +870,17 @@ adapter for acquiring nested variables and must not be 0."
                                    (propertize (s-truncate dap-ui-variable-length
                                                            (s-replace "\n" "\\n" value))
                                                'help-echo value))
-                          :icon dap-variable
-                          :value ,value
-                          :session ,debug-session
-                          :variables-reference ,variables-reference
-                          :name ,name
-                          :actions '(["Set value" dap-ui-set-variable-value])
-                          :key ,name
-                          ,@(unless (zerop variables-reference)
-                              (list :children
-                                    (-partial #'dap-ui-render-variables debug-session
-                                              variables-reference indexed-variables named-variables)))))))))
+                   :icon dap-variable
+                   :value ,value
+                   :session ,debug-session
+                   :variables-reference ,variables-reference
+                   :name ,name
+                   :actions '(["Set value" dap-ui-set-variable-value])
+                   :key ,name
+                   ,@(unless (zerop variables-reference)
+                       (list :children
+                             (-partial #'dap-ui-render-variables debug-session
+                                       variables-reference indexed-variables named-variables)))))))))
 
 (defun dap-ui-render-value
     (debug-session expression value variables-reference)
@@ -891,15 +891,15 @@ evaluated. VARIABLES-REFERENCE is returned by the evaluate
 request."
   (lsp-treemacs-render
    `((:key ,expression
-           :label ,value
-           :icon dap-field
-           ,@(unless (zerop variables-reference)
-               (list :children
-                     (-partial #'dap-ui-render-variables
-                               debug-session
-                               variables-reference
-                               nil
-                               nil)))))
+      :label ,value
+      :icon dap-field
+      ,@(unless (zerop variables-reference)
+          (list :children
+                (-partial #'dap-ui-render-variables
+                          debug-session
+                          variables-reference
+                          nil
+                          nil)))))
    "" nil (buffer-name)))
 
 (defun dap-ui-eval-in-buffer (expression)
@@ -951,14 +951,15 @@ request."
                                           nil
                                           nil)))))
       '((:label "Nothing to display..."
-                :key "foo"
-                :icon :empty))))
+         :key "foo"
+         :icon :empty))))
 
 (defun dap-ui-locals--refresh (&rest _)
   (save-excursion
     (setq dap-ui--locals-timer nil)
     (lsp-treemacs-wcb-unless-killed dap-ui--locals-buffer
-      (lsp-treemacs-generic-update (dap-ui-locals-get-data)))))
+      (lsp-treemacs-generic-update (dap-ui-locals-get-data)))
+    (lsp-treemacs-render (dap-ui-locals-get-data) " Locals " dap-ui-locals-expand-depth  dap-ui--locals-buffer)))
 
 (defun dap-ui-locals--refresh-schedule (&rest _)
   (lsp-treemacs-wcb-unless-killed dap-ui--locals-buffer
@@ -982,7 +983,7 @@ request."
     (add-hook 'kill-buffer-hook #'dap-ui-locals--cleanup-hooks nil t)
     (lsp-treemacs-render (dap-ui-locals-get-data) " Locals " dap-ui-locals-expand-depth  dap-ui--locals-buffer)
     (dap-ui--show-buffer (current-buffer))))
-
+
 ;; watch expressions
 
 (defcustom dap-ui-expressions nil
@@ -1044,37 +1045,37 @@ request."
                             :frameId active-frame-id
                             :context "watch")]
                       `(:key ,expression
-                             :expression ,expression
-                             :label ,(concat (propertize (format "%s: " expression) 'face 'font-lock-variable-name-face)
-                                             (propertize (s-truncate dap-ui-variable-length
-                                                                     (s-replace "\n" "\\n" result))
-                                                         'help-echo result))
-                             :icon expression
-                             ,@(when (and variables-reference (not (zerop variables-reference)))
-                                 (list :children (-partial #'dap-ui-render-variables debug-session variables-reference nil nil)))
-                             :actions (["Remove" dap-ui-expressions-mouse-remove]
-                                       "--"
-                                       ["Add" dap-ui-expressions-add]
-                                       ["Refresh" dap-ui-expressions-refresh])))
+                        :expression ,expression
+                        :label ,(concat (propertize (format "%s: " expression) 'face 'font-lock-variable-name-face)
+                                        (propertize (s-truncate dap-ui-variable-length
+                                                                (s-replace "\n" "\\n" result))
+                                                    'help-echo result))
+                        :icon expression
+                        ,@(when (and variables-reference (not (zerop variables-reference)))
+                            (list :children (-partial #'dap-ui-render-variables debug-session variables-reference nil nil)))
+                        :actions (["Remove" dap-ui-expressions-mouse-remove]
+                                  "--"
+                                  ["Add" dap-ui-expressions-add]
+                                  ["Refresh" dap-ui-expressions-refresh])))
                   (error `(:key ,expression
-                                :label ,(concat (propertize (format "%s: " expression) 'face 'font-lock-variable-name-face)
-                                                (propertize (error-message-string err) 'face 'error))
-                                :icon failed-expression
-                                :actions (["Remove" dap-ui-expressions-mouse-remove]
-                                          "--"
-                                          ["Add" dap-ui-expressions-add]
-                                          ["Refresh" dap-ui-expressions-refresh])))))
+                           :label ,(concat (propertize (format "%s: " expression) 'face 'font-lock-variable-name-face)
+                                           (propertize (error-message-string err) 'face 'error))
+                           :icon failed-expression
+                           :actions (["Remove" dap-ui-expressions-mouse-remove]
+                                     "--"
+                                     ["Add" dap-ui-expressions-add]
+                                     ["Refresh" dap-ui-expressions-refresh])))))
             (lambda (expression)
               `(:key ,expression
-                     :expression ,expression
-                     :label ,(concat
-                              (propertize (format "%s: " expression) 'face 'font-lock-variable-name-face)
-                              (propertize "not available" 'face 'italic))
-                     :icon expression
-                     :actions (["Remove" dap-ui-expressions-mouse-remove]
-                               "--"
-                               ["Add" dap-ui-expressions-add]
-                               ["Refresh" dap-ui-expressions-refresh]))))
+                :expression ,expression
+                :label ,(concat
+                         (propertize (format "%s: " expression) 'face 'font-lock-variable-name-face)
+                         (propertize "not available" 'face 'italic))
+                :icon expression
+                :actions (["Remove" dap-ui-expressions-mouse-remove]
+                          "--"
+                          ["Add" dap-ui-expressions-add]
+                          ["Refresh" dap-ui-expressions-refresh]))))
           dap-ui-expressions))
        " Expressions "
        dap-ui-expressions-expand-depth
